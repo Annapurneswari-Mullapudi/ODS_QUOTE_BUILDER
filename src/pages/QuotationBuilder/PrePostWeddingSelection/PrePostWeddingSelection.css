@@ -1,0 +1,481 @@
+/* Pre-Post Wedding Selection Container */
+.pre-post-wedding-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #010101;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+.pre-post-wedding-container .ss-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  max-width: 100%;
+}
+
+.pre-post-wedding-container .back-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.pre-post-wedding-container .back-button:hover {
+  transform: scale(1.1);
+}
+
+.pre-post-wedding-container .header-logo {
+  flex: 1;
+  text-align: center;
+  height: 6.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pre-post-wedding-container .header-logo img {
+  height: 6.5rem;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+.pre-post-wedding-container .header-spacer {
+  width: 2.5rem;
+}
+
+.pre-post-wedding-container .ss-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 5rem;
+  max-width: 90rem;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.pre-post-wedding-container .step-indicator {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.pre-post-wedding-container .step-number {
+  font-size: 0.875rem;
+  letter-spacing: 0.15rem;
+  color: #999999;
+  margin: 0;
+}
+
+.pre-post-wedding-container .ss-title-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.pre-post-wedding-container .ss-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: -0.05rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.pre-post-wedding-container .divider-line {
+  width: 3.75rem;
+  height: 0.0625rem;
+  background: linear-gradient(to right, transparent, #666, transparent);
+  margin: 2rem auto 1rem;
+  position: relative;
+}
+
+.pre-post-wedding-container .divider-line::before,
+.pre-post-wedding-container .divider-line::after {
+  content: '✦';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.pre-post-wedding-container .ss-subtitle {
+  font-size: 1rem;
+  color: #cccccc;
+  max-width: 45rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Pre-Post Grid */
+.pre-post-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 0rem;
+  flex: 1;
+}
+
+/* Pre-Post Card */
+.pre-post-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.pre-post-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-0.25rem);
+}
+
+.pre-post-card.selected {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.08);
+  box-shadow: 0 0 1.5rem rgba(212, 165, 116, 0.15);
+}
+
+/* Pre-Post Card Image */
+.pre-post-card-image {
+  position: relative;
+  width: 100%;
+  height: 12rem;
+  overflow: hidden;
+}
+
+.pre-post-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.pre-post-card:hover .pre-post-card-image img {
+  transform: scale(1.02);
+}
+
+.checkbox-container {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.checkbox {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.checkbox.checked {
+  background: #d4a574;
+  border-color: #d4a574;
+}
+
+.checkbox .checkmark {
+  display: none;
+  color: #010101;
+  font-weight: bold;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.checkbox.checked .checkmark {
+  display: block;
+}
+
+/* Pre-Post Card Content */
+.pre-post-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pre-post-card-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02rem;
+}
+
+.pre-post-card-description {
+  font-size: 0.9rem;
+  color: #999999;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Footer */
+.pre-post-wedding-container .ss-footer {
+  border-top: none !important;
+  padding: 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.pre-post-wedding-container .ss-actions {
+  display: flex;
+  gap: 1.8rem;
+  width: 69%;
+  max-width: 90rem;
+}
+
+.pre-post-wedding-container .btn-back {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pre-post-wedding-container .btn-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.pre-post-wedding-container .btn-next {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: #d4a574;
+  color: #010101;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pre-post-wedding-container .btn-next:hover:not(:disabled) {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(212, 165, 116, 0.3);
+  background: #e8b88a;
+}
+
+.pre-post-wedding-container .btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Desktop */
+@media (min-width: 75rem) {
+  .pre-post-wedding-container .ss-main {
+    padding: 2.5rem 5rem;
+  }
+
+  .pre-post-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .pre-post-card-image {
+    height: 14rem;
+  }
+
+  .pre-post-wedding-container .ss-title {
+    font-size: 3rem;
+  }
+
+  .pre-post-wedding-container .ss-subtitle {
+    font-size: 1.125rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 48rem) and (max-width: 74.9375rem) {
+  .pre-post-wedding-container .header-logo {
+    height: 5rem;
+  }
+
+  .pre-post-wedding-container .header-logo img {
+    height: 5rem;
+  }
+
+  .pre-post-wedding-container .ss-main {
+    padding: 2rem 2rem;
+    width: 90%;
+  }
+
+  .pre-post-wedding-container .ss-title {
+    font-size: 2rem;
+  }
+
+  .pre-post-wedding-container .ss-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .pre-post-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .pre-post-card-image {
+    height: 11rem;
+  }
+
+  .pre-post-card-content {
+    padding: 1.25rem;
+  }
+
+  .pre-post-card-title {
+    font-size: 1rem;
+  }
+
+  .pre-post-wedding-container .btn-back,
+  .pre-post-wedding-container .btn-next {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile Tablet */
+@media (min-width: 30rem) and (max-width: 47.9375rem) {
+  .pre-post-wedding-container .header-logo {
+    height: 6rem;
+  }
+
+  .pre-post-wedding-container .header-logo img {
+    height: 7rem;
+  }
+
+  .pre-post-wedding-container .ss-main {
+    padding: 1.5rem 0rem;
+  }
+
+  .pre-post-wedding-container .ss-title {
+    font-size: 1.5rem;
+  }
+
+  .pre-post-wedding-container .ss-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .pre-post-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    justify-content: center;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pre-post-card-image {
+    height: 10rem;
+  }
+
+  .pre-post-card-content {
+    padding: 1rem;
+  }
+
+  .pre-post-card-title {
+    font-size: 1rem;
+  }
+
+  .pre-post-wedding-container .btn-back,
+  .pre-post-wedding-container .btn-next {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 29.9375rem) {
+  .pre-post-wedding-container .back-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.1rem;
+  }
+
+  .pre-post-wedding-container .header-logo {
+    height: 5rem;
+  }
+
+  .pre-post-wedding-container .header-logo img {
+    height: 5rem;
+  }
+
+  .pre-post-wedding-container .header-spacer {
+    width: 1.75rem;
+  }
+
+  .pre-post-wedding-container .ss-main {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .pre-post-wedding-container .ss-title {
+    font-size: 1.25rem;
+  }
+
+  .pre-post-wedding-container .ss-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .pre-post-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    justify-content: center;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pre-post-card-image {
+    height: 8rem;
+  }
+
+  .pre-post-card-content {
+    padding: 0.875rem;
+  }
+
+  .pre-post-card-title {
+    font-size: 0.95rem;
+  }
+
+  .checkbox {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .pre-post-wedding-container .btn-back,
+  .pre-post-wedding-container .btn-next {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .pre-post-wedding-container .ss-actions {
+    gap: 0.75rem;
+  }
+}

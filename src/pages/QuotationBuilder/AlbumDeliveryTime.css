@@ -1,0 +1,569 @@
+/* ==================== Root Font Size ==================== */
+:root {
+  font-size: 16px;
+}
+
+@media (max-width: 48rem) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* ==================== Container ==================== */
+.delivery-time-container {
+  min-height: 100vh;
+  background: #010101;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== Header ==================== */
+.dt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  max-width: 100%;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
+.header-logo {
+  flex: 1;
+  text-align: center;
+  height: 7rem;
+}
+
+.header-logo img {
+  height: 6.5rem;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+.header-spacer {
+  width: 2.5rem;
+}
+
+/* ==================== Main Content ==================== */
+.dt-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==================== Step Indicator ==================== */
+.step-indicator {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.step-number {
+  font-size: 0.875rem;
+  letter-spacing: 0.15rem;
+  color: #999999;
+}
+
+/* ==================== Title Section ==================== */
+.dt-title-section {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.dt-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: -0.05rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.divider-line {
+  width: 3.75rem;
+  height: 0.0625rem;
+  background: linear-gradient(to right, transparent, #666, transparent);
+  margin: 1.5rem auto 1rem;
+  position: relative;
+}
+
+.divider-line::before,
+.divider-line::after {
+  content: '✦';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.dt-subtitle {
+  font-size: 1rem;
+  color: #cccccc;
+  max-width: 45rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ==================== Delivery Options Grid ==================== */
+.delivery-options-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex: 1;
+}
+
+.delivery-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-height: 12rem;
+}
+
+.delivery-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-0.25rem);
+}
+
+.delivery-card.selected {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.08);
+  box-shadow: 0 0 1.5rem rgba(212, 165, 116, 0.15);
+}
+
+.delivery-icon-container {
+  margin-bottom: 1.5rem;
+}
+
+.delivery-icon {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid rgba(212, 165, 116, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: #d4a574;
+  transition: all 0.3s ease;
+}
+
+.delivery-card.selected .delivery-icon {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.15);
+}
+
+.delivery-time {
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02rem;
+}
+
+.delivery-price {
+  font-size: 1.25rem;
+  color: #d4a574;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ==================== Budget Section ==================== */
+.dt-budget-section {
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.budget-display {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%);
+  border: 2px solid rgba(212, 165, 116, 0.3);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.budget-label {
+  font-size: 1rem;
+  color: #999999;
+  margin: 0;
+  letter-spacing: 0.05rem;
+  flex: 1;
+  text-align: left;
+}
+
+.budget-amount {
+  font-size: 2rem;
+  color: #d4a574;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.05rem;
+  flex: 1;
+  text-align: right;
+}
+
+/* ==================== Action Buttons ==================== */
+.dt-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-back {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-quote {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: #d4a574;
+  color: #010101;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-quote:hover:not(:disabled) {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(212, 165, 116, 0.3);
+  background: #e8b88a;
+}
+
+.btn-quote:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== Desktop (1200px and above) ==================== */
+@media (min-width: 75rem) {
+  .dt-main {
+    padding: 2.5rem 5rem;
+  }
+
+  .delivery-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .delivery-card {
+    min-height: 14rem;
+    padding: 3rem;
+  }
+
+  .dt-title {
+    font-size: 3rem;
+  }
+
+  .dt-subtitle {
+    font-size: 1.125rem;
+  }
+}
+
+/* ==================== Tablet (768px to 1199px) ==================== */
+@media (min-width: 48rem) and (max-width: 74.9375rem) {
+  :root {
+    font-size: 15px;
+  }
+
+  .delivery-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .dt-header {
+    padding: 1.5rem 1.5rem;
+  }
+
+  .header-logo img {
+    height: 5rem;
+  }
+
+  .dt-main {
+    padding: 2rem 2rem;
+  }
+
+  .dt-title {
+    font-size: 2rem;
+  }
+
+  .dt-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .delivery-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .delivery-card {
+    min-height: 12rem;
+    padding: 2rem;
+  }
+
+  .delivery-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+  }
+
+  .delivery-time {
+    font-size: 1.5rem;
+  }
+
+  .budget-display {
+    padding: 1.25rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .budget-label {
+    text-align: center;
+  }
+
+  .budget-amount {
+    text-align: center;
+    font-size: 1.75rem;
+  }
+
+  .btn-back,
+  .btn-quote {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==================== Mobile (480px to 767px) ==================== */
+@media (min-width: 30rem) and (max-width: 47.9375rem) {
+  :root {
+    font-size: 14px;
+  }
+
+  .dt-header {
+    gap: 0.75rem;
+  }
+
+  .back-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+  }
+
+  .header-logo {
+    height: 50%;
+  }
+
+  .header-logo img {
+    height: 5.5rem;
+  }
+
+  .header-spacer {
+    width: 2rem;
+  }
+
+  .dt-main {
+    padding: 1.5rem 1rem;
+    width: 80%;
+  }
+
+  .dt-title {
+    font-size: 1.5rem;
+  }
+
+  .dt-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .delivery-options-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .delivery-card {
+    min-height: 10rem;
+    padding: 1.5rem;
+  }
+
+  .delivery-icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
+  .delivery-icon-container {
+    margin-bottom: 1rem;
+  }
+
+  .delivery-time {
+    font-size: 1.25rem;
+  }
+
+  .delivery-price {
+    font-size: 1rem;
+  }
+
+  .budget-display {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .budget-label {
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .budget-amount {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  .btn-back,
+  .btn-quote {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ==================== Small Mobile (below 480px) ==================== */
+@media (max-width: 29.9375rem) {
+  :root {
+    font-size: 13px;
+  }
+
+  .dt-header {
+    padding: 1rem 0.75rem;
+  }
+
+  .back-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.1rem;
+  }
+
+  .header-logo img {
+    height: 3rem;
+  }
+
+  .header-spacer {
+    width: 1.75rem;
+  }
+
+  .dt-main {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .dt-title {
+    font-size: 1.25rem;
+  }
+
+  .dt-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .delivery-options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .delivery-card {
+    min-height: 9rem;
+    padding: 1.25rem;
+  }
+
+  .delivery-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .delivery-icon-container {
+    margin-bottom: 0.75rem;
+  }
+
+  .delivery-time {
+    font-size: 1rem;
+  }
+
+  .delivery-price {
+    font-size: 0.9rem;
+  }
+
+  .budget-display {
+    padding: 0.75rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .budget-label {
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .budget-amount {
+    text-align: center;
+    font-size: 1.25rem;
+  }
+
+  .btn-back,
+  .btn-quote {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+  }
+}

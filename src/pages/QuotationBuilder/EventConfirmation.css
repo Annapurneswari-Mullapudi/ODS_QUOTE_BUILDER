@@ -1,0 +1,497 @@
+/* ==================== Root Font Size ==================== */
+:root {
+  font-size: 16px;
+}
+
+@media (max-width: 48rem) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* ==================== Container ==================== */
+.event-confirmation-container {
+  min-height: 100vh;
+  background: #010101;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== Header ==================== */
+.ec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  max-width: 100%;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
+.header-logo {
+  flex: 1;
+  text-align: center;
+  height: 6.5rem;
+}
+
+.header-logo img {
+  height: 6.5rem;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+.header-spacer {
+  width: 2.5rem;
+}
+
+/* ==================== Main Content ==================== */
+.ec-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==================== Step Indicator ==================== */
+.step-indicator {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.step-number {
+  font-size: 0.875rem;
+  letter-spacing: 0.15rem;
+  color: #999999;
+}
+
+/* ==================== Title Section ==================== */
+.ec-title-section {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.ec-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: -0.05rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.divider-line {
+  width: 3.75rem;
+  height: 0.0625rem;
+  background: linear-gradient(to right, transparent, #666, transparent);
+  margin: 1.5rem auto 1rem;
+  position: relative;
+}
+
+.divider-line::before,
+.divider-line::after {
+  content: '✦';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.ec-subtitle {
+  font-size: 1rem;
+  color: #cccccc;
+  max-width: 45rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ==================== Options Grid ==================== */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex: 1;
+}
+
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-height: 12rem;
+}
+
+.option-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-0.25rem);
+}
+
+.option-card.selected {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.08);
+  box-shadow: 0 0 1.5rem rgba(212, 165, 116, 0.15);
+}
+
+.option-card.positive.selected {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.08);
+  box-shadow: 0 0 1.5rem rgba(212, 165, 116, 0.15);
+}
+
+.option-card.negative.selected {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.08);
+  box-shadow: 0 0 1.5rem rgba(212, 165, 116, 0.15);
+}
+
+.option-icon-container {
+  margin-bottom: 1.5rem;
+}
+
+.option-icon {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid rgba(212, 165, 116, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: #d4a574;
+  transition: all 0.3s ease;
+}
+
+.option-card.selected .option-icon {
+  border-color: #d4a574;
+  background: rgba(212, 165, 116, 0.15);
+}
+
+.option-title {
+  font-size: 1.75rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02rem;
+}
+
+.option-description {
+  font-size: 0.95rem;
+  color: #999999;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==================== Action Buttons ==================== */
+.ec-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-back {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-next {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: #d4a574;
+  color: #010101;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-next:hover:not(:disabled) {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(212, 165, 116, 0.3);
+  background: #e8b88a;
+}
+
+.btn-next:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== Desktop (1200px and above) ==================== */
+@media (min-width: 75rem) {
+  .ec-main {
+    padding: 2.5rem 5rem;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .option-card {
+    min-height: 14rem;
+    padding: 3rem;
+  }
+
+  .ec-title {
+    font-size: 3rem;
+  }
+
+  .ec-subtitle {
+    font-size: 1.125rem;
+  }
+}
+
+/* ==================== Tablet (768px to 1199px) ==================== */
+@media (min-width: 48rem) and (max-width: 74.9375rem) {
+  :root {
+    font-size: 15px;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .ec-header {
+    padding: 1.5rem 1.5rem;
+    /* width: 80%; */
+  }
+
+  .header-logo img {
+    height: 5rem;
+  }
+
+  .ec-main {
+    padding: 2rem 2rem;
+  }
+
+  .ec-title {
+    font-size: 2rem;
+  }
+
+  .ec-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .option-card {
+    min-height: 12rem;
+    padding: 2rem;
+  }
+
+  .option-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 1.5rem;
+  }
+
+  .option-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-back,
+  .btn-next {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ==================== Mobile (480px to 767px) ==================== */
+@media (min-width: 30rem) and (max-width: 47.9375rem) {
+  :root {
+    font-size: 14px;
+  }
+
+  .ec-header {
+    /* padding: 1.25rem 1rem; */
+    gap: 0.75rem;
+  }
+
+  .back-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+  }
+
+  .header-logo {
+    height: 50%;
+  }
+
+  .header-logo img {
+    height: 5.5rem;
+  }
+
+  .header-spacer {
+    width: 2rem;
+  }
+
+  .ec-main {
+    padding: 1.5rem 1rem;
+    width: 95%;
+  }
+
+  .ec-title {
+    font-size: 1.5rem;
+  }
+
+  .ec-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .option-card {
+    min-height: 10rem;
+    padding: 1.5rem;
+  }
+
+  .option-icon {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+
+  .option-icon-container {
+    margin-bottom: 1rem;
+  }
+
+  .option-title {
+    font-size: 1.25rem;
+  }
+
+  .option-description {
+    font-size: 0.85rem;
+  }
+
+  .btn-back,
+  .btn-next {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* ==================== Small Mobile (below 480px) ==================== */
+@media (max-width: 29.9375rem) {
+  :root {
+    font-size: 13px;
+  }
+
+  .ec-header {
+    padding: 1rem 0.75rem;
+  }
+
+  .back-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.1rem;
+  }
+
+  .header-logo img {
+    height: 3rem;
+  }
+
+  .header-spacer {
+    width: 1.75rem;
+  }
+
+  .ec-main {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .ec-title {
+    font-size: 1.25rem;
+  }
+
+  .ec-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .option-card {
+    min-height: 9rem;
+    padding: 1.25rem;
+  }
+
+  .option-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .option-icon-container {
+    margin-bottom: 0.75rem;
+  }
+
+  .option-title {
+    font-size: 1rem;
+  }
+
+  .option-description {
+    font-size: 0.8rem;
+  }
+
+  .btn-back,
+  .btn-next {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
