@@ -57,7 +57,7 @@ const PreWeddingDuration = ({ selectedEvents, cumulativeTotalPrice, onBack, onNe
           ←
         </button>
         <div className="header-logo">
-          <img src={odsLogo} alt="One Day Stories" />
+          <img src={odsLogo} alt="One Day Stories" style={{height: '80%'}}/>
         </div>
         <div className="header-spacer"></div>
       </header>
@@ -66,7 +66,7 @@ const PreWeddingDuration = ({ selectedEvents, cumulativeTotalPrice, onBack, onNe
       <main className="pwd-main">
         {/* Step Indicator */}
         <div className="step-indicator">
-          <p className="step-number">STEP 2.3</p>
+          <p className="step-number">STEP 2.2</p>
         </div>
 
         {/* Title Section */}

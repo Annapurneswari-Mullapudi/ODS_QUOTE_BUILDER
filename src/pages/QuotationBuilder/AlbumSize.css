@@ -728,11 +728,13 @@
   }
 
   .as-title {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
+    font-weight: 400;
   }
 
   .as-subtitle {
     font-size: 0.85rem;
+    max-width: 85%;
   }
 
   .album-selection-section {
@@ -812,6 +814,15 @@
   .btn-next {
     padding: 0.7rem 1rem;
     font-size: 0.8rem;
+  }
+
+  .as-price-label {
+    font-size: 0.7rem;
+  }
+
+  .as-events-total-price{
+    margin-left: 0.4rem;
+    text-decoration: underline;
   }
 }
 

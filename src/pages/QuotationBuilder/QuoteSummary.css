@@ -855,6 +855,7 @@
 
   .qs-header {
     padding: 1rem 0.75rem;
+    height: 7rem;
   }
 
   .back-button {
@@ -876,7 +877,8 @@
   }
 
   .qs-title {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
+    font-weight: 400;
   }
 
   .qs-subtitle {
@@ -891,6 +893,11 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
     border-radius: 0.75rem;
+    /* padding: 1rem; */
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
   }
 
   .events-container > div {
@@ -957,14 +964,26 @@
 
   .qs-actions {
     gap: 0.5rem;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    margin-top: 1rem;
   }
 
   .btn-back,
   .btn-download {
     padding: 0.7rem 1rem;
     font-size: 0.8rem;
-    width: 100%;
+    flex: 1;
+    min-width: calc(50% - 0.25rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.4rem;
+  }
+
+  .btn-share {
+    display: none;
   }
 
   .show-all-events-btn {
@@ -1094,7 +1113,7 @@
 
 @media (max-width: 29.9375rem) {
   .client-name-section {
-    margin: 1rem 0 0.75rem 0;
+    margin: 0rem 0 0.75rem 0;
     padding: 1rem;
   }
 

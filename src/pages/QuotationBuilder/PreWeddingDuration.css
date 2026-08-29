@@ -767,16 +767,23 @@
 
   .pwd-header {
     padding: 1rem 0.75rem;
+    height: 7rem;
+    width: 100%;
   }
 
   .back-button {
     width: 1.75rem;
     height: 1.75rem;
     font-size: 1.1rem;
+    margin-left: 1rem;
+  }
+
+  .header-logo {
+    height: 5rem;
   }
 
   .header-logo img {
-    height: 3rem;
+    height: 5rem;
   }
 
   .header-spacer {
@@ -790,7 +797,8 @@
   }
 
   .pwd-title {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
+    font-weight: 400;
   }
 
   .pwd-subtitle {
@@ -876,32 +884,34 @@
   }
 
   .pwd-price-label {
-    font-size: 0.5rem;
+    font-size: 0.7rem;
     color: #999999;
     letter-spacing: 0.01rem;
     margin: 0;
   }
 
   .pwd-services-total-price {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
     color: #d4a574;
   }
 
   .pwd-events-total-price {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 600;
     margin: 0;
     color: #cccccc;
+    text-decoration: underline;
+    margin-left: 0.4rem;
   }
 
   .pwd-total-price-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-end;
     justify-content: flex-end;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     width: 100%;
   }
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import odsLogo from '../../assets/OdsLogo.jpeg'
 import './EventConfirmation.css'
 
-const EventConfirmation = ({ eventType, onBack, onNext }) => {
+const EventConfirmation = ({ eventType, onBack, onNext, isWeddingFlow }) => {
   const [selectedOption, setSelectedOption] = useState(null)
 
   const options = [
@@ -67,10 +67,15 @@ const EventConfirmation = ({ eventType, onBack, onNext }) => {
   }
 
   const getStepNumber = () => {
+    // For album confirmation in pre/post-wedding flow
+    if (!isWeddingFlow && eventType === 'album') {
+      return '2.1'
+    }
+    
+    // For wedding flow
     const stepMap = {
-      'wedding': '2.1',
-      'pre-wedding': '2.2',
-      'engagement': '3.2',
+      'pre-wedding': '2.1',
+      'engagement': '3.1',
       'groom': '4.1',
       'groom-haldi': '5.1',
       'bride-making': '6.1',

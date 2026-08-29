@@ -964,7 +964,7 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
           ←
         </button>
         <div className="header-logo">
-          <img src={odsLogo} alt="One Day Stories" />
+          <img src={odsLogo} alt="One Day Stories" style={{height: "80%"}} />
         </div>
         <div className="header-spacer"></div>
       </header>

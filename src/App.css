@@ -180,7 +180,7 @@
 .footer {
   margin-top: 3.75rem;
   padding-top: 2.5rem;
-  border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.349);
 }
 
 .footer-content {
@@ -563,13 +563,14 @@
 
   .description {
     font-size: 0.9rem;
-    max-width: 80%;
+    max-width: 75%;
     line-height: 1.5;
   }
 
   .divider {
     width: 2.5rem;
     margin: 0.875rem auto;
+    margin-bottom: 8rem;
   }
 
   .divider::before,
@@ -603,7 +604,7 @@
   }
 
   .footer {
-    margin-top: 2.5rem;
+    margin-top: 0rem;
     padding-top: 1.5rem;
   }
 
@@ -633,10 +634,10 @@
     margin-left: 0rem;
     margin-bottom: 0rem;
     position: relative;
-    margin-top: -20%;
+    margin-top: -17%;
   }
 
   .header {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0rem;
   }
 }

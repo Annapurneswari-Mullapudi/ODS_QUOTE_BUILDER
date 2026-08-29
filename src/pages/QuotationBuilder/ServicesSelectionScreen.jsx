@@ -8,7 +8,7 @@ import droneImg from '../../assets/droneImg.jpeg'
 import audienceCameraImg from '../../assets/audienceCameraImg.jpeg'
 import './ServicesSelectionScreen.css'
 
-const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPrice, onBack, onNext, hideServicePrices, eventBudget, eventServicesMemory, defaultServices }) => {
+const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPrice, onBack, onNext, hideServicePrices, eventBudget, eventServicesMemory, defaultServices, isWeddingFlow }) => {
   const [selectedServices, setSelectedServices] = useState(new Set())
   const [serviceQuantities, setServiceQuantities] = useState({})
   const [totalPrice, setTotalPrice] = useState(0)
@@ -86,16 +86,25 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
       })
       setServiceQuantities(quantities)
       
-      // Calculate total price for default services
+      // For pre/post-wedding: price is based on eventBudget (duration price), not service prices
+      // For other events: calculate from service prices
+      const isPreOrPostWedding = eventType === 'pre-wedding' || eventType === 'post-wedding'
       let totalServicePrice = 0
-      allServices.forEach(service => {
-        if (defaultServices.includes(service.id)) {
-          totalServicePrice += service.price
-        }
-      })
+      
+      if (isPreOrPostWedding && eventBudget) {
+        // Use the duration price (eventBudget) as the base
+        totalServicePrice = eventBudget
+      } else {
+        // Calculate from individual service prices
+        allServices.forEach(service => {
+          if (defaultServices.includes(service.id)) {
+            totalServicePrice += service.price
+          }
+        })
+      }
       setTotalPrice(totalServicePrice)
     }
-  }, [eventType, eventServicesMemory, defaultServices])
+  }, [eventType, eventServicesMemory, defaultServices, eventBudget])
 
   const getServicesForEvent = (event) => {
     const serviceMap = {
@@ -128,11 +137,12 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
     if (!isPreOrPostWedding) return 0
 
     let extraCharges = 0
+    
     Array.from(selectedServices).forEach(serviceId => {
       const quantity = serviceQuantities[serviceId] || 1
       const service = allServices.find(s => s.id === serviceId)
       if (service && quantity > 1) {
-        // Only charge for quantities > 1
+        // Only charge for quantities > 1 using the ACTUAL service price
         extraCharges += service.price * (quantity - 1)
       }
     })
@@ -163,15 +173,15 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
     if (newSelected.has(serviceId)) {
       newSelected.delete(serviceId)
       delete newQuantities[serviceId]
-      // Only deduct from total if we're showing prices
-      if (!hideServicePrices) {
-        setTotalPrice(totalPrice - price * (newQuantities[serviceId] || 1))
+      // Only update totalPrice if NOT hideServicePrices AND not pre/post-wedding
+      if (!hideServicePrices && !isPreOrPostWedding) {
+        setTotalPrice(totalPrice - price * (serviceQuantities[serviceId] || 1))
       }
     } else {
       newSelected.add(serviceId)
       newQuantities[serviceId] = 1
-      // Only add to total if we're showing prices
-      if (!hideServicePrices) {
+      // Only update totalPrice if NOT hideServicePrices AND not pre/post-wedding
+      if (!hideServicePrices && !isPreOrPostWedding) {
         setTotalPrice(totalPrice + price)
       }
     }
@@ -202,8 +212,11 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
       setSelectedServices(newSelected)
       setServiceQuantities(newQuantities)
       
-      if (!hideServicePrices) {
+      if (!hideServicePrices && !isPreOrPostWedding) {
         setTotalPrice(totalPrice - price)
+      } else if (isPreOrPostWedding && eventBudget) {
+        // For pre/post-wedding, reduce by eventBudget
+        setTotalPrice(totalPrice - eventBudget)
       }
       return
     }
@@ -212,26 +225,12 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
     newQuantities[serviceId] = newQuantity
     setServiceQuantities(newQuantities)
 
-    if (!hideServicePrices) {
-      // For pre-wedding and post-wedding, only charge for quantities > 1
-      let priceChange = 0
-      if (isPreOrPostWedding) {
-        // Only charge for extra quantities beyond 1
-        if (newQuantity > 1 && currentQuantity === 1) {
-          // Going from 1 to 2+, only charge for the extras
-          priceChange = price * (newQuantity - 1)
-        } else if (newQuantity > currentQuantity) {
-          // Increasing quantity, charge for the additional units
-          priceChange = price * (newQuantity - currentQuantity)
-        } else if (newQuantity < currentQuantity) {
-          // Decreasing quantity, reduce the charge
-          priceChange = -price * (currentQuantity - newQuantity)
-        }
-      } else {
-        // For other events, charge normally
-        priceChange = price * change
-      }
-      
+    // Only update totalPrice if NOT hideServicePrices
+    // When hideServicePrices=true (like wedding flow and pre/post-wedding short flow),
+    // let handleNextStep calculate using calculateExtraServiceCharges
+    if (!hideServicePrices && !isPreOrPostWedding) {
+      // For other events showing prices, charge normally
+      const priceChange = price * change
       setTotalPrice(totalPrice + priceChange)
     }
   }
@@ -284,7 +283,8 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
 
   const handleNextStep = () => {
     if (selectedServices.size > 0) {
-      // For pre-wedding and post-wedding, calculate: duration price + extra service charges
+      // For pre-wedding and post-wedding: price = duration price + extra service charges
+      // For other events: price = totalPrice
       let finalPrice = totalPrice
       
       if (eventType === 'pre-wedding' || eventType === 'post-wedding') {
@@ -298,10 +298,15 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
   }
 
   const getStepNumber = () => {
+    // For pre/post-wedding flow from PrePostWeddingSelection
+    if (!isWeddingFlow && (eventType === 'pre-wedding' || eventType === 'post-wedding')) {
+      return '1.3'
+    }
+    
+    // For wedding flow - goes to duration first
     const stepMap = {
-      'wedding': '1.2',
-      'pre-wedding': '3.1',
-      'engagement': '3.3',
+      'pre-wedding': '2.3',
+      'engagement': '3.2',
       'groom': '4.2',
       'groom-haldi': '5.2',
       'bride-making': '6.2',
@@ -378,7 +383,13 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
                 <h3 className="service-title">{service.title}</h3>
                 <p className="service-description">{service.description}</p>
                 <div className="service-footer">
-                  {!hideServicePrices && <p className="service-price">₹ {service.price.toLocaleString()}</p>}
+                  {!hideServicePrices && (
+                    <p className="service-price">
+                      {eventType === 'pre-wedding' || eventType === 'post-wedding'
+                        ? eventBudget ? `₹ ${eventBudget.toLocaleString()}` : `₹ ${service.price.toLocaleString()}`
+                        : `₹ ${service.price.toLocaleString()}`}
+                    </p>
+                  )}
                   
                   {/* Quantity Controls */}
                   {selectedServices.has(service.id) && (
@@ -438,12 +449,12 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
                   <p className="services-total-price">₹ {currentEventPrice.toLocaleString()}</p>
                   <p className="price-label">Budget of this event </p>
                 </div>
-                <button 
+                {/* <button 
                   className="dropdown-btn" 
                   onClick={() => setExpandedSummary(!expandedSummary)}
                 >
                   {expandedSummary ? '▲' : '▼'}
-                </button>
+                </button> */}
               </div>
               {/* <div className="price-divider"></div>
               <div className="price-item">

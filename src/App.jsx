@@ -18,6 +18,7 @@ import './App.css'
 function App() {
   const [currentPage, setCurrentPage] = useState('landing')
   const [selectedEvent, setSelectedEvent] = useState(null)
+  const [isWeddingFlow, setIsWeddingFlow] = useState(false)
   const [preWeddingDurationPrice, setPreWeddingDurationPrice] = useState(0)
   const [postWeddingDurationPrice, setPostWeddingDurationPrice] = useState(0)
   const [preWeddingDurationId, setPreWeddingDurationId] = useState(null)
@@ -97,14 +98,22 @@ function App() {
   // ============ EVENT SELECTION (1.1) HANDLERS ============
   const handleEventSelected = (eventType) => {
     if (eventType === 'pre-post-wedding') {
+      setIsWeddingFlow(false)
       handleNavigateToNext('pre-post-wedding')
     } else if (eventType === 'birthday') {
+      setIsWeddingFlow(false)
       handleNavigateToNext('birthday-selection')
     } else if (eventType === 'other-events') {
+      setIsWeddingFlow(false)
       setSelectedEvent('other-events')
       handleNavigateToNext('other-events-services')
     } else {
       setSelectedEvent(eventType)
+      if (eventType === 'wedding') {
+        setIsWeddingFlow(true)
+      } else {
+        setIsWeddingFlow(false)
+      }
       handleNavigateToNext('service-selection')
     }
   }
@@ -125,8 +134,8 @@ function App() {
     if (selectedEvent === 'engagement' || selectedEvent === 'birthday' || selectedEvent === 'pre-birthday' || selectedEvent === 'maternity') {
       handleNavigateToNext('album-confirmation')
     } else if (selectedEvent === 'wedding') {
-      // For wedding, go through the complete flow: wedding confirmation -> pre-wedding -> ... -> album
-      handleNavigateToNext('wedding-confirmation')
+      // For wedding, go directly to pre-wedding confirmation (2.1)
+      handleNavigateToNext('pre-wedding-confirmation')
     } else {
       handleNavigateToNext('pre-wedding-confirmation')
     }
@@ -142,7 +151,6 @@ function App() {
       
       // Navigation map for YES responses
       const nextPageMap = {
-        'wedding': 'pre-wedding-confirmation',
         'pre-wedding': 'pre-wedding-duration',
         'engagement': 'engagement-services',
         'groom': 'groom-services',
@@ -166,7 +174,6 @@ function App() {
       
       // Navigation map for NO responses
       const nextEventMap = {
-        'wedding': 'quote-summary',
         'pre-wedding': 'engagement-confirmation',
         'engagement': 'groom-confirmation',
         'groom': 'groom-haldi-confirmation',
@@ -200,18 +207,21 @@ function App() {
 
   // ============ PRE-WEDDING SERVICES HANDLERS ============
   const handlePreWeddingServiceNext = (services, totalPrice, quantities) => {
-    // totalPrice now includes: duration price + extra service charges
-    // Store with the calculated totalPrice which includes all charges
     setEventServicesMemory(prev => ({
       ...prev,
       'pre-wedding': { services, totalPrice, quantities }
     }))
-    // ⭐ Add to finalized events so it appears in quote summary
     const newFinalized = new Set(finalizedEvents)
     newFinalized.add('pre-wedding')
     setFinalizedEvents(newFinalized)
     
-    handleNavigateToNext('engagement-confirmation')
+    // For wedding flow, go to engagement confirmation
+    // For pre/post-wedding flow, go to album confirmation
+    if (isWeddingFlow) {
+      handleNavigateToNext('engagement-confirmation')
+    } else {
+      handleNavigateToNext('album-confirmation')
+    }
   }
 
   // ============ ENGAGEMENT SERVICES HANDLERS ============
@@ -228,19 +238,19 @@ function App() {
     handleNavigateToNext('groom-confirmation')
   }
 
-  // ============ WEDDING SERVICES HANDLERS ============
-  const handleWeddingServiceNext = (services, totalPrice, quantities) => {
-    setEventServicesMemory(prev => ({
-      ...prev,
-      'wedding': { services, totalPrice, quantities }
-    }))
-    // ⭐ Add to finalized events so it's included in budget calculations
-    const newFinalized = new Set(finalizedEvents)
-    newFinalized.add('wedding')
-    setFinalizedEvents(newFinalized)
+  // ============ ENGAGEMENT SERVICES HANDLERS ============
+  // const handleEngagementServiceNext = (services, totalPrice, quantities) => {
+  //   setEventServicesMemory(prev => ({
+  //     ...prev,
+  //     'engagement': { services, totalPrice, quantities }
+  //   }))
+  //   // ⭐ Add to finalized events so it appears in quote summary
+  //   const newFinalized = new Set(finalizedEvents)
+  //   newFinalized.add('engagement')
+  //   setFinalizedEvents(newFinalized)
     
-    handleNavigateToNext('groom-confirmation')
-  }
+  //   handleNavigateToNext('groom-confirmation')
+  // }
 
   // ============ GROOM SERVICES HANDLERS ============
   const handleGroomServiceNext = (services, totalPrice, quantities) => {
@@ -325,17 +335,16 @@ function App() {
 
   // ============ POST WEDDING SERVICES HANDLERS ============
   const handlePostWeddingServiceNext = (services, totalPrice, quantities) => {
-    // totalPrice now includes: duration price + extra service charges
-    // Store with the calculated totalPrice which includes all charges
     setEventServicesMemory(prev => ({
       ...prev,
       'post-wedding': { services, totalPrice, quantities }
     }))
-    // ⭐ Add to finalized events so it appears in quote summary
     const newFinalized = new Set(finalizedEvents)
     newFinalized.add('post-wedding')
     setFinalizedEvents(newFinalized)
     
+    // For wedding flow, go to album confirmation
+    // For pre/post-wedding flow, go to album confirmation (same destination)
     handleNavigateToNext('album-confirmation')
   }
 
@@ -495,31 +504,6 @@ function App() {
     )
   }
 
-  if (currentPage === 'wedding-confirmation') {
-    return (
-      <EventConfirmation
-        key="wedding-confirmation"
-        eventType="wedding"
-        onBack={handleNavigateBack}
-        onNext={(option) => handleConfirmationNext(option, 'wedding')}
-      />
-    )
-  }
-
-  if (currentPage === 'wedding-services') {
-    return (
-      <ServicesSelectionScreen
-        eventType="wedding"
-        selectedEvents={[...getSelectedEventTypes(), 'wedding']}
-        cumulativeTotalPrice={calculateCumulativeTotalExcludingCurrent('wedding')}
-        onBack={handleNavigateBack}
-        onNext={handleWeddingServiceNext}
-        eventServicesMemory={eventServicesMemory}
-        finalizedEvents={finalizedEvents}
-      />
-    )
-  }
-
   if (currentPage === 'pre-wedding-confirmation') {
     return (
       <EventConfirmation
@@ -556,6 +540,7 @@ function App() {
         eventServicesMemory={eventServicesMemory}
         finalizedEvents={finalizedEvents}
         defaultServices={['candid-photo', 'candid-video', 'drone']}
+        isWeddingFlow={false}
       />
     )
   }
@@ -846,6 +831,7 @@ function App() {
         eventServicesMemory={eventServicesMemory}
         finalizedEvents={finalizedEvents}
         defaultServices={['candid-photo', 'candid-video', 'drone']}
+        isWeddingFlow={false}
       />
     )
   }
@@ -871,6 +857,7 @@ function App() {
         eventType="album"
         onBack={handleNavigateBack}
         onNext={handleAlbumConfirmationNext}
+        isWeddingFlow={isWeddingFlow}
       />
     )
   }
@@ -883,6 +870,7 @@ function App() {
         onNext={handleAlbumSizeNext}
         initialSelectedAlbums={selectedAlbumsMemory}
         initialAlbumNotes={albumNotesMemory}
+        isWeddingFlow={isWeddingFlow}
       />
     )
   }

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import odsLogo from '../../assets/OdsLogo.jpeg'
 import './AlbumSize.css'
 
-const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums = {}, initialAlbumNotes = {} }) => {
+const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums = {}, initialAlbumNotes = {}, isWeddingFlow }) => {
   const [selectedSheets, setSelectedSheets] = useState(null)
   const [selectedSize, setSelectedSize] = useState(null)
   const [selectedAlbums, setSelectedAlbums] = useState(initialSelectedAlbums.length > 0 ? initialSelectedAlbums.reduce((acc, album, idx) => {
@@ -207,7 +207,7 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
       <main className="as-main">
         {/* Step Indicator */}
         <div className="step-indicator">
-          <p className="step-number">STEP 14.2</p>
+          <p className="step-number">STEP {isWeddingFlow ? '14.2' : '2.2'}</p>
         </div>
 
         {/* Title Section */}

@@ -503,8 +503,9 @@
   }
 
   .qb-title {
-    font-size: 1.25rem;
+    font-size: 1.6rem;
     margin-bottom: 0.5rem;
+    font-weight: 400;
   }
 
   .qb-subtitle {
@@ -549,5 +550,6 @@
 
   .qb-actions {
     margin-top: 0.75rem;
+    margin-bottom: 3.5rem;
   }
 }

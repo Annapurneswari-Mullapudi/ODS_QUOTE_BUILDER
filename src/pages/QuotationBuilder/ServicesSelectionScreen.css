@@ -909,7 +909,10 @@
   }
 
   .ss-title {
-    font-size: 1.25rem;
+    /* font-size: 1.25rem; */
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    font-weight: 400;
   }
 
   .ss-subtitle {
@@ -989,32 +992,33 @@
   }
 
   .price-label {
-    font-size: 0.5rem;
+    font-size: 0.8rem;
     color: #999999;
     letter-spacing: 0.01rem;
-    margin: 0;
+    margin-right: 0.32rem;
   }
 
   .services-total-price {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
     color: #d4a574;
   }
 
   .events-total-price {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 600;
     margin: 0;
     color: #cccccc;
+    text-decoration: underline;
   }
 
   .total-price-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-end;
     justify-content: flex-end;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     width: 100%;
   }
 
@@ -1027,6 +1031,7 @@
     padding: 0;
     transition: transform 0.2s ease;
     flex-shrink: 0;
+    margin-left: 0.4rem;
   }
 
   .dropdown-btn:hover {
@@ -1041,5 +1046,6 @@
   .btn-next {
     padding: 0.7rem 1rem;
     font-size: 0.8rem;
+    margin-bottom: 3.5rem;
   }
 }
