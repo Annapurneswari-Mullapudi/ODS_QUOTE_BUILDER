@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import odsLogo from '../../assets/OdsLogo.jpeg'
-import weddingImg from '../../assets/weddingImg.png'
+import weddingImg from '../../assets/weddingImg.jpg'
 import preWeddingImg from '../../assets/preWeddingImg.png'
 import engagementImg from '../../assets/engagementImg.jpeg'
 import birthdayImg from '../../assets/birthdayImg.jpeg'
@@ -64,7 +64,7 @@ const EventSelection = ({ onBack, onNext }) => {
           ←
         </button>
         <div className="header-logo">
-          <img src={odsLogo} alt="One Day Stories" />
+          <img src={odsLogo} alt="One Day Stories" style={{height: '70%' }}/>
         </div>
         <div className="header-spacer"></div>
       </header>

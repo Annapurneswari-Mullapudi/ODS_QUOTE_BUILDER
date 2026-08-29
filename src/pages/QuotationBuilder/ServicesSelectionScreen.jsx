@@ -300,8 +300,8 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
   const getStepNumber = () => {
     const stepMap = {
       'wedding': '1.2',
-      'pre-wedding': '2.3',
-      'engagement': '3.2',
+      'pre-wedding': '3.1',
+      'engagement': '3.3',
       'groom': '4.2',
       'groom-haldi': '5.2',
       'bride-making': '6.2',
@@ -324,7 +324,7 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
           ←
         </button>
         <div className="header-logo">
-          <img src={odsLogo} alt="One Day Stories" />
+          <img src={odsLogo} alt="One Day Stories" style={{ height: '80%' }}/>
         </div>
         <div className="header-spacer"></div>
       </header>

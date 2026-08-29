@@ -68,8 +68,9 @@ const EventConfirmation = ({ eventType, onBack, onNext }) => {
 
   const getStepNumber = () => {
     const stepMap = {
-      'pre-wedding': '2.1',
-      'engagement': '3.1',
+      'wedding': '2.1',
+      'pre-wedding': '2.2',
+      'engagement': '3.2',
       'groom': '4.1',
       'groom-haldi': '5.1',
       'bride-making': '6.1',
@@ -93,7 +94,7 @@ const EventConfirmation = ({ eventType, onBack, onNext }) => {
           ←
         </button>
         <div className="header-logo">
-          <img src={odsLogo} alt="One Day Stories" />
+          <img src={odsLogo} alt="One Day Stories" style={{height: '80%'}}/>
         </div>
         <div className="header-spacer"></div>
       </header>

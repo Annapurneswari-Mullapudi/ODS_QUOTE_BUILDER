@@ -66,7 +66,7 @@ const PreWeddingDuration = ({ selectedEvents, cumulativeTotalPrice, onBack, onNe
       <main className="pwd-main">
         {/* Step Indicator */}
         <div className="step-indicator">
-          <p className="step-number">STEP 2.2</p>
+          <p className="step-number">STEP 2.3</p>
         </div>
 
         {/* Title Section */}

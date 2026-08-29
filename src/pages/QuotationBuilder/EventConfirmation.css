@@ -430,8 +430,9 @@
     font-size: 13px;
   }
 
+
   .ec-header {
-    padding: 1rem 0.75rem;
+    padding: 0rem 0.75rem;
   }
 
   .back-button {
@@ -450,6 +451,7 @@
 
   .ec-main {
     padding: 1.25rem 0.75rem;
+    width: 95%;
   }
 
   .ec-title {
@@ -466,8 +468,9 @@
   }
 
   .option-card {
-    min-height: 9rem;
-    padding: 1.25rem;
+    min-height: 4rem;
+    /* max-height: 7rem; */
+    padding: 0rem;
   }
 
   .option-icon {

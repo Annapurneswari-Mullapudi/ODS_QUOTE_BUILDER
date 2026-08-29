@@ -705,7 +705,7 @@
   }
 
   .as-header {
-    padding: 1rem 0.75rem;
+    padding: 0rem 0.75rem;
   }
 
   .back-button {
@@ -724,6 +724,7 @@
 
   .as-main {
     padding: 1.25rem 0.75rem;
+    width: 95%;
   }
 
   .as-title {
