@@ -973,7 +973,7 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
       <main className="qs-main">
         {/* Step Indicator */}
         <div className="step-indicator">
-          <p className="step-number">YOUR QUOTE</p>
+          <p className="step-number">FINAL STEP</p>
         </div>
 
         {/* Title Section */}

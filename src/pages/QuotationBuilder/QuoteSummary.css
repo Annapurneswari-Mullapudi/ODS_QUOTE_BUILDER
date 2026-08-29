@@ -881,6 +881,7 @@
 
   .qs-subtitle {
     font-size: 0.85rem;
+    width: 70%;
   }
 
   .events-container {
