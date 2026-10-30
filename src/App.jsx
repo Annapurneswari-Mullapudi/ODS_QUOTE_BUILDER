@@ -954,7 +954,7 @@ function App() {
         </section>
 
         {/* Bottom Camera Image */}
-        <footer className="footer">
+        {/* <footer className="footer">
           <div className="footer-content">
             <p className="footer-text">
               <span className="script-text">Every moment has a story</span>
@@ -965,7 +965,7 @@ function App() {
               <img src={bottomCameraImg} alt="Professional camera" className="bottom-camera" />
             </div>
           </div>
-        </footer>
+        </footer> */}
       </main>
     </div>
   )
