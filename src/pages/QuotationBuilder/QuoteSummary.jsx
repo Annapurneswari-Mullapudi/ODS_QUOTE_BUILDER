@@ -7,6 +7,26 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
   const [showAllEvents, setShowAllEvents] = useState(false)
   const [localEvents, setLocalEvents] = useState(quoteData.events)
   const [clientName, setClientName] = useState('')
+  const [customDeliverables, setCustomDeliverables] = useState([])
+  const [newDeliverable, setNewDeliverable] = useState({ title: '', quantity: '1', price: '' })
+
+  const handleNewDeliverableChange = (field, value) => {
+    const sanitized = field === 'title' ? value : value.replace(/[^\d]/g, '')
+    setNewDeliverable(prev => ({ ...prev, [field]: sanitized }))
+  }
+
+  const handleAddDeliverable = () => {
+    const title = newDeliverable.title.trim()
+    if (!title) return
+    const quantity = Number(newDeliverable.quantity) || 1
+    const price = Number(newDeliverable.price) || 0
+    setCustomDeliverables(prev => [...prev, { title, quantity, price }])
+    setNewDeliverable({ title: '', quantity: '1', price: '' })
+  }
+
+  const handleRemoveDeliverable = (index) => {
+    setCustomDeliverables(prev => prev.filter((_, i) => i !== index))
+  }
 
   const toggleEventExpanded = (eventType) => {
     setExpandedEvent(expandedEvent === eventType ? null : eventType)
@@ -230,17 +250,12 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
       // Convert image to base64 for PDF embedding
       const img = new Image()
       img.onload = () => {
-        const canvas = document.createElement('canvas')
-        canvas.width = img.width
-        canvas.height = img.height
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0)
-        const imgData = canvas.toDataURL('image/jpeg')
-        
+        const circularLogo = makeCircularImage(img)
+
         // HEADER - White background with black text
-        // Add ODS Logo on the right side
-        pdf.addImage(imgData, 'JPEG', pageWidth - margin - 22, 7, 18, 18)
-        
+        // Add round ODS Logo on the right side
+        pdf.addImage(circularLogo, 'PNG', pageWidth - margin - 24, 6, 24, 24)
+
         pdf.setTextColor(...goldColor)
         pdf.setFontSize(28)
         pdf.setFont(undefined, 'bold')
@@ -478,21 +493,89 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
           
           y += 9
         })
-        
+
+        // ADDITIONAL DELIVERABLES (manually added custom items)
+        if (customDeliverables.length > 0) {
+          checkNewPage(40)
+
+          pdf.setFillColor(...goldColor)
+          pdf.rect(margin, y, contentWidth, 8, 'F')
+          pdf.setTextColor(0, 0, 0)
+          pdf.setFontSize(12)
+          pdf.setFont(undefined, 'bold')
+          pdf.text('Additional Deliverables', margin + 4, y + 6)
+          y += 12
+
+          const addColWidths = [80, 35, 15, 10, 50]
+          pdf.setFillColor(...lightGrayColor)
+          pdf.rect(margin, y, contentWidth, 7, 'F')
+          pdf.setTextColor(...blackColor)
+          pdf.setFontSize(9)
+          pdf.setFont(undefined, 'bold')
+          let addColX = margin + 2
+          pdf.text('Item', addColX, y + 5)
+          addColX += addColWidths[0]
+          pdf.text('Unit Price', addColX, y + 5)
+          addColX += addColWidths[1]
+          pdf.text('Qty', addColX, y + 5, { align: 'center' })
+          addColX += addColWidths[2]
+          addColX += addColWidths[3]
+          pdf.text('Total', addColX, y + 5)
+          y += 9
+
+          pdf.setFont(undefined, 'normal')
+          pdf.setFontSize(9)
+          let additionalTotal = 0
+          customDeliverables.forEach((item, itemIdx) => {
+            checkNewPage(12)
+            pdf.setTextColor(...blackColor)
+            if (itemIdx % 2 === 0) {
+              pdf.setFillColor(255, 255, 255)
+              pdf.rect(margin, y - 1, contentWidth, 7, 'F')
+            }
+            const lineTotal = item.price * item.quantity
+            additionalTotal += lineTotal
+            addColX = margin + 2
+            pdf.text(item.title, addColX, y + 2)
+            addColX += addColWidths[0]
+            pdf.text(`Rs. ${item.price.toLocaleString()}`, addColX, y + 2)
+            addColX += addColWidths[1]
+            pdf.text(item.quantity.toString(), addColX, y + 2, { align: 'center' })
+            addColX += addColWidths[2]
+            addColX += addColWidths[3]
+            pdf.text(`Rs. ${lineTotal.toLocaleString()}`, addColX, y + 2)
+            y += 7
+          })
+
+          y += 3
+          pdf.setDrawColor(...goldColor)
+          pdf.setLineWidth(0.5)
+          pdf.line(margin, y, pageWidth - margin, y)
+          y += 5
+          pdf.setTextColor(...darkGrayColor)
+          pdf.setFont(undefined, 'normal')
+          pdf.setFontSize(8)
+          pdf.text('Section Total:', margin + 2, y)
+          pdf.setTextColor(...goldColor)
+          pdf.setFont(undefined, 'bold')
+          pdf.text(`Rs. ${additionalTotal.toLocaleString()}`, pageWidth - margin - 20, y)
+          y += 9
+        }
+
         // GRAND TOTAL
         checkNewPage(30)
-        
+
         y += 8
         pdf.setDrawColor(...goldColor)
         pdf.setLineWidth(1)
         pdf.line(margin, y, pageWidth - margin, y)
-        
+
         y += 12
         pdf.setTextColor(...blackColor)
         pdf.setFont(undefined, 'bold')
         pdf.setFontSize(11)
-        
-        const totalLabel = `Total Budget (${localEvents.length} Event${localEvents.length !== 1 ? 's' : ''})`
+
+        const totalLabel = `Total Budget (${getEventsCountLabel()})`
         const totalAmount = `Rs. ${calculateTotalBudget().toLocaleString()}`
         
         pdf.text(totalLabel, margin + 5, y)
@@ -502,7 +585,13 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
         pdf.setFontSize(16)
         const totalAmountX = pageWidth - margin - 5
         pdf.text(totalAmount, totalAmountX, y, { align: 'right' })
-        
+
+        // DELIVERABLES SUMMARY (what the client finally receives)
+        renderDeliverablesSection(pdf, { pageWidth, pageHeight, margin, contentWidth, goldColor, darkGrayColor })
+
+        // TERMS & CONDITIONS
+        renderTermsAndConditions(pdf, { pageWidth, pageHeight, margin, contentWidth, goldColor, darkGrayColor })
+
         // FOOTER
         y = pageHeight - margin - 12
         pdf.setTextColor(...darkGrayColor)
@@ -521,8 +610,11 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
         pdf.setFontSize(7)
         pdf.text('This quote is valid for 30 days from the date of generation.', pageWidth / 2, y, { align: 'center' })
         
+        // Faint logo watermark on every page
+        addLogoWatermark(pdf, circularLogo, pageWidth, pageHeight)
+
         // Download PDF with client name
-        const fileName = currentClientName.trim() 
+        const fileName = currentClientName.trim()
           ? `${currentClientName}_${getQuoteSubtitle().replace(/\s+/g, '')}.pdf`
           : `ODS_Quote_${new Date().getTime()}.pdf`
         pdf.save(fileName)
@@ -640,21 +732,28 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
       // HEADER - White background with black text
       // No background fill, just text and logo
       
-      // Convert image to base64 for PDF embedding
+      // Convert image to base64 for PDF embedding. The content below is drawn
+      // synchronously first; this onload fires afterwards, so by the time it runs
+      // every page exists — we stamp the watermark, add the header logo, then save.
       const img = new Image()
       img.onload = () => {
-        const canvas = document.createElement('canvas')
-        canvas.width = img.width
-        canvas.height = img.height
-        const ctx = canvas.getContext('2d')
-        ctx.drawImage(img, 0, 0)
-        const imgData = canvas.toDataURL('image/jpeg')
-        
-        // Add ODS Logo on the right side
-        pdf.addImage(imgData, 'JPEG', pageWidth - margin - 22, 7, 18, 18)
+        const circularLogo = makeCircularImage(img)
+
+        // Faint logo watermark on every page
+        addLogoWatermark(pdf, circularLogo, pageWidth, pageHeight)
+
+        // Add round ODS Logo on the right side of the first page
+        pdf.setPage(1)
+        pdf.addImage(circularLogo, 'PNG', pageWidth - margin - 24, 6, 24, 24)
+
+        // Save with client name
+        const fileName = currentClientName.trim()
+          ? `${currentClientName}_${getQuoteSubtitle().replace(/\s+/g, '')}.pdf`
+          : `ODS_Quote_${new Date().getTime()}.pdf`
+        pdf.save(fileName)
       }
       img.src = odsLogo
-      
+
       pdf.setTextColor(...goldColor)
       pdf.setFontSize(28)
       pdf.setFont(undefined, 'bold')
@@ -893,21 +992,89 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
         
         y += 9
       })
-      
+
+      // ADDITIONAL DELIVERABLES (manually added custom items)
+      if (customDeliverables.length > 0) {
+        checkNewPage(40)
+
+        pdf.setFillColor(...goldColor)
+        pdf.rect(margin, y, contentWidth, 8, 'F')
+        pdf.setTextColor(0, 0, 0)
+        pdf.setFontSize(12)
+        pdf.setFont(undefined, 'bold')
+        pdf.text('Additional Deliverables', margin + 4, y + 6)
+        y += 12
+
+        const addColWidths = [80, 35, 15, 10, 50]
+        pdf.setFillColor(...lightGrayColor)
+        pdf.rect(margin, y, contentWidth, 7, 'F')
+        pdf.setTextColor(...blackColor)
+        pdf.setFontSize(9)
+        pdf.setFont(undefined, 'bold')
+        let addColX = margin + 2
+        pdf.text('Item', addColX, y + 5)
+        addColX += addColWidths[0]
+        pdf.text('Unit Price', addColX, y + 5)
+        addColX += addColWidths[1]
+        pdf.text('Qty', addColX, y + 5, { align: 'center' })
+        addColX += addColWidths[2]
+        addColX += addColWidths[3]
+        pdf.text('Total', addColX, y + 5)
+        y += 9
+
+        pdf.setFont(undefined, 'normal')
+        pdf.setFontSize(9)
+        let additionalTotal = 0
+        customDeliverables.forEach((item, itemIdx) => {
+          checkNewPage(12)
+          pdf.setTextColor(...blackColor)
+          if (itemIdx % 2 === 0) {
+            pdf.setFillColor(255, 255, 255)
+            pdf.rect(margin, y - 1, contentWidth, 7, 'F')
+          }
+          const lineTotal = item.price * item.quantity
+          additionalTotal += lineTotal
+          addColX = margin + 2
+          pdf.text(item.title, addColX, y + 2)
+          addColX += addColWidths[0]
+          pdf.text(`Rs. ${item.price.toLocaleString()}`, addColX, y + 2)
+          addColX += addColWidths[1]
+          pdf.text(item.quantity.toString(), addColX, y + 2, { align: 'center' })
+          addColX += addColWidths[2]
+          addColX += addColWidths[3]
+          pdf.text(`Rs. ${lineTotal.toLocaleString()}`, addColX, y + 2)
+          y += 7
+        })
+
+        y += 3
+        pdf.setDrawColor(...goldColor)
+        pdf.setLineWidth(0.5)
+        pdf.line(margin, y, pageWidth - margin, y)
+        y += 5
+        pdf.setTextColor(...darkGrayColor)
+        pdf.setFont(undefined, 'normal')
+        pdf.setFontSize(8)
+        pdf.text('Section Total:', margin + 2, y)
+        pdf.setTextColor(...goldColor)
+        pdf.setFont(undefined, 'bold')
+        pdf.text(`Rs. ${additionalTotal.toLocaleString()}`, pageWidth - margin - 20, y)
+        y += 9
+      }
+
       // GRAND TOTAL
       checkNewPage(30)
-      
+
       y += 8
       pdf.setDrawColor(...goldColor)
       pdf.setLineWidth(1)
       pdf.line(margin, y, pageWidth - margin, y)
-      
+
       y += 12
       pdf.setTextColor(...blackColor)
       pdf.setFont(undefined, 'bold')
       pdf.setFontSize(11)
-      
-      const totalLabel = `Total Budget (${localEvents.length} Event${localEvents.length !== 1 ? 's' : ''})`
+
+      const totalLabel = `Total Budget (${getEventsCountLabel()})`
       const totalAmount = `Rs. ${calculateTotalBudget().toLocaleString()}`
       
       // Draw label on left
@@ -919,7 +1086,13 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
       pdf.setFontSize(16)
       const totalAmountX = pageWidth - margin - 5
       pdf.text(totalAmount, totalAmountX, y, { align: 'right' })
-      
+
+      // DELIVERABLES SUMMARY (what the client finally receives)
+      renderDeliverablesSection(pdf, { pageWidth, pageHeight, margin, contentWidth, goldColor, darkGrayColor })
+
+      // TERMS & CONDITIONS
+      renderTermsAndConditions(pdf, { pageWidth, pageHeight, margin, contentWidth, goldColor, darkGrayColor })
+
       // FOOTER
       y = pageHeight - margin - 12
       pdf.setTextColor(...darkGrayColor)
@@ -937,23 +1110,312 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
       pdf.setTextColor(150, 150, 150)
       pdf.setFontSize(7)
       pdf.text('This quote is valid for 30 days from the date of generation.', pageWidth / 2, y, { align: 'center' })
-      
-      // Save with client name
-      const fileName = currentClientName.trim() 
-        ? `${currentClientName}_${getQuoteSubtitle().replace(/\s+/g, '')}.pdf`
-        : `ODS_Quote_${new Date().getTime()}.pdf`
-      pdf.save(fileName)
+
+      // The PDF is saved inside img.onload (above), once the logo is loaded and
+      // the watermark has been stamped on every page.
     }
-    
+
     script.onerror = () => {
       alert('Error loading PDF library. Please try again.')
     }
-    
+
     document.head.appendChild(script)
   }
 
+  const getCustomDeliverablesTotal = () => {
+    return customDeliverables.reduce((total, item) => total + item.price * item.quantity, 0)
+  }
+
   const calculateTotalBudget = () => {
-    return localEvents.reduce((total, event) => total + event.totalPrice, 0)
+    const eventsTotal = localEvents.reduce((total, event) => total + event.totalPrice, 0)
+    return eventsTotal + getCustomDeliverablesTotal()
+  }
+
+  // Count label for the Total Budget: real events plus a separate album count
+  // (albums are not counted as events)
+  const getEventsCountLabel = () => {
+    const eventCount = localEvents.filter(e => e.eventType !== 'album').length
+    const albumCount = localEvents
+      .filter(e => e.eventType === 'album')
+      .reduce((sum, e) => sum + (Array.isArray(e.albums) ? e.albums.length : 1), 0)
+
+    let label = `${eventCount} ${eventCount === 1 ? 'Event' : 'Events'}`
+    if (albumCount > 0) {
+      label += ` + ${albumCount} ${albumCount === 1 ? 'Album' : 'Albums'}`
+    }
+    return label
+  }
+
+  // Videos grouped by type (for the deliverables summary): each video type lists the
+  // names of the events that selected it, shown side by side.
+  const VIDEO_TYPES = [
+    { id: 'traditional-video', heading: 'Regular Videos' },
+    { id: 'candid-video', heading: 'Candid Videos' },
+    { id: 'audience-video', heading: 'Audience Videos' }
+  ]
+  const videoDeliverablesByType = VIDEO_TYPES
+    .map(type => ({
+      heading: type.heading,
+      events: localEvents
+        .filter(event => event.eventType !== 'album' && Array.isArray(event.services) && event.services.includes(type.id))
+        .map(event => getEventTitle(event.eventType, event.eventName))
+    }))
+    .filter(group => group.events.length > 0)
+
+  // Albums shown at the end of the deliverables list
+  const albumDeliverables = localEvents
+    .filter(event => event.eventType === 'album' && Array.isArray(event.albums))
+    .flatMap(event => event.albums)
+
+  // Returns a circular (round) version of the logo as a transparent PNG data URL,
+  // by cropping the image to a centered square and clipping it to a circle.
+  const makeCircularImage = (img) => {
+    const size = Math.min(img.width, img.height)
+    const canvas = document.createElement('canvas')
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext('2d')
+    ctx.beginPath()
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2)
+    ctx.closePath()
+    ctx.clip()
+    const sx = (img.width - size) / 2
+    const sy = (img.height - size) / 2
+    ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size)
+    return canvas.toDataURL('image/png')
+  }
+
+  // Stamps the ODS logo as a faint, transparent watermark centered on every page.
+  // Call this after all content/pages have been drawn, right before saving.
+  const addLogoWatermark = (pdf, logoData, pageWidth, pageHeight) => {
+    const totalPages = pdf.getNumberOfPages()
+    const supportsOpacity = typeof pdf.GState === 'function'
+
+    // Centered round watermark (transparent corners), smaller than the page
+    const size = 110 // mm — diameter of the round watermark
+    const x = (pageWidth - size) / 2
+    const y = (pageHeight - size) / 2
+
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i)
+      if (supportsOpacity) {
+        pdf.setGState(new pdf.GState({ opacity: 0.12 }))
+      }
+      pdf.addImage(logoData, 'PNG', x, y, size, size)
+      if (supportsOpacity) {
+        pdf.setGState(new pdf.GState({ opacity: 1 }))
+      }
+    }
+  }
+
+  // Renders the "what you finally receive" summary on a fresh page at the end of the PDF.
+  // Videos are grouped by type (event names side by side); albums and additional
+  // deliverables are shown as a quantity table.
+  const renderDeliverablesSection = (pdf, layout) => {
+    const { pageHeight, margin, contentWidth, goldColor, darkGrayColor } = layout
+    const blackColor = [0, 0, 0]
+    const lightGrayColor = [240, 240, 240]
+    const borderColor = [210, 210, 210]
+    const groupTintColor = [248, 241, 232]
+
+    const hasDeliverables =
+      videoDeliverablesByType.length > 0 ||
+      albumDeliverables.length > 0 ||
+      customDeliverables.length > 0
+    if (!hasDeliverables) return
+
+    pdf.addPage()
+    let y = margin
+
+    // Section title bar
+    pdf.setFillColor(...goldColor)
+    pdf.rect(margin, y, contentWidth, 8, 'F')
+    pdf.setTextColor(...blackColor)
+    pdf.setFontSize(12)
+    pdf.setFont(undefined, 'bold')
+    pdf.text('Deliverables', margin + 4, y + 6)
+    y += 11
+    pdf.setTextColor(120, 120, 120)
+    pdf.setFontSize(8)
+    pdf.setFont(undefined, 'italic')
+    pdf.text('What you will finally receive', margin + 2, y)
+    y += 8
+
+    // Single table: video types (event names side by side) + albums + additional
+    const qtyColWidth = 25
+    const itemColWidth = contentWidth - qtyColWidth
+    const dividerX = margin + itemColWidth
+    const rowH = 8
+    const lineGap = 5
+
+    const drawTableHeader = () => {
+      pdf.setFillColor(...lightGrayColor)
+      pdf.rect(margin, y, contentWidth, rowH, 'F')
+      pdf.setDrawColor(...borderColor)
+      pdf.setLineWidth(0.2)
+      pdf.rect(margin, y, contentWidth, rowH)
+      pdf.line(dividerX, y, dividerX, y + rowH)
+      pdf.setTextColor(...blackColor)
+      pdf.setFont(undefined, 'bold')
+      pdf.setFontSize(9)
+      pdf.text('Deliverable', margin + 3, y + 5.5)
+      pdf.text('Qty', dividerX + qtyColWidth / 2, y + 5.5, { align: 'center' })
+      y += rowH
+    }
+
+    const checkTablePage = (minSpace = rowH) => {
+      if (y + minSpace > pageHeight - margin) {
+        pdf.addPage()
+        y = margin
+        drawTableHeader()
+      }
+    }
+
+    // Full-width group heading row (e.g. "Regular Videos", "Albums")
+    const renderGroupHeadingRow = (title) => {
+      checkTablePage(rowH * 2)
+      pdf.setFillColor(...groupTintColor)
+      pdf.rect(margin, y, contentWidth, rowH, 'F')
+      pdf.setDrawColor(...borderColor)
+      pdf.setLineWidth(0.2)
+      pdf.rect(margin, y, contentWidth, rowH)
+      pdf.setTextColor(...goldColor)
+      pdf.setFont(undefined, 'bold')
+      pdf.setFontSize(9)
+      pdf.text(title, margin + 3, y + 5.5)
+      y += rowH
+    }
+
+    // Full-width row listing event names side by side (wraps onto multiple lines)
+    const renderEventNamesRow = (events) => {
+      pdf.setFont(undefined, 'normal')
+      pdf.setFontSize(9)
+      const namesLine = events.join('     •     ')
+      const lines = pdf.splitTextToSize(namesLine, contentWidth - 6)
+      const rowHeight = Math.max(rowH, 3 + lines.length * lineGap)
+      checkTablePage(rowHeight)
+      pdf.setDrawColor(...borderColor)
+      pdf.setLineWidth(0.2)
+      pdf.rect(margin, y, contentWidth, rowHeight)
+      pdf.setTextColor(...darkGrayColor)
+      let ty = y + 5.5
+      lines.forEach(line => {
+        pdf.text(line, margin + 3, ty)
+        ty += lineGap
+      })
+      y += rowHeight
+    }
+
+    // Qty rows (albums / additional deliverables)
+    const renderQtyRows = (items) => {
+      pdf.setFont(undefined, 'normal')
+      pdf.setFontSize(9)
+      items.forEach((item, idx) => {
+        checkTablePage(rowH)
+        if (idx % 2 === 1) {
+          pdf.setFillColor(250, 250, 250)
+          pdf.rect(margin, y, contentWidth, rowH, 'F')
+        }
+        pdf.setDrawColor(...borderColor)
+        pdf.setLineWidth(0.2)
+        pdf.rect(margin, y, contentWidth, rowH)
+        pdf.line(dividerX, y, dividerX, y + rowH)
+        pdf.setTextColor(...darkGrayColor)
+        const nameLines = pdf.splitTextToSize(item.name, itemColWidth - 6)
+        pdf.text(nameLines[0], margin + 3, y + 5.5)
+        pdf.text(`${item.quantity}`, dividerX + qtyColWidth / 2, y + 5.5, { align: 'center' })
+        y += rowH
+      })
+    }
+
+    drawTableHeader()
+
+    // Video types as rows inside the table
+    videoDeliverablesByType.forEach(group => {
+      renderGroupHeadingRow(group.heading)
+      renderEventNamesRow(group.events)
+    })
+
+    // Albums
+    if (albumDeliverables.length > 0) {
+      renderGroupHeadingRow('Albums')
+      renderQtyRows(albumDeliverables.map(a => ({ name: `${a.title} (${a.sheets})`, quantity: a.quantity })))
+    }
+
+    // Additional (manually added) deliverables
+    if (customDeliverables.length > 0) {
+      renderGroupHeadingRow('Additional Deliverables')
+      renderQtyRows(customDeliverables.map(c => ({ name: c.title, quantity: c.quantity })))
+    }
+  }
+
+  // Renders the Terms & Conditions on a fresh page at the end of the PDF
+  const renderTermsAndConditions = (pdf, layout) => {
+    const { pageHeight, margin, contentWidth, goldColor } = layout
+    const blackColor = [0, 0, 0]
+    const darkGrayColor = [50, 50, 50]
+
+    const terms = [
+      {
+        heading: 'Travel, Food & Accommodation',
+        points: [
+          'For events outside Rajahmundry, travel, local transport and accommodation will either be arranged by the client or charged as per actuals.',
+          'For both outstation and Rajahmundry events, the crew dines along with the guests. A per-diem meal charge will be applicable for each crew member.'
+        ]
+      }
+    ]
+
+    const centerX = margin + contentWidth / 2
+
+    pdf.addPage()
+    let y = margin
+
+    // Section title bar (centered title)
+    pdf.setFillColor(...goldColor)
+    pdf.rect(margin, y, contentWidth, 8, 'F')
+    pdf.setTextColor(...blackColor)
+    pdf.setFontSize(12)
+    pdf.setFont(undefined, 'bold')
+    pdf.text('Terms & Conditions', centerX, y + 6, { align: 'center' })
+    y += 12
+    pdf.setTextColor(120, 120, 120)
+    pdf.setFontSize(8)
+    pdf.setFont(undefined, 'italic')
+    pdf.text('Please review the following before confirming your booking', centerX, y, { align: 'center' })
+    y += 12
+
+    const checkPage = (minSpace) => {
+      if (y + minSpace > pageHeight - margin) {
+        pdf.addPage()
+        y = margin
+      }
+    }
+
+    terms.forEach(term => {
+      checkPage(20)
+
+      // Heading (centered, no numbering)
+      pdf.setTextColor(...goldColor)
+      pdf.setFont(undefined, 'bold')
+      pdf.setFontSize(10)
+      pdf.text(term.heading, centerX, y, { align: 'center' })
+      y += 7
+
+      // Points (centered, no bullets)
+      pdf.setTextColor(...darkGrayColor)
+      pdf.setFont(undefined, 'normal')
+      pdf.setFontSize(9)
+      term.points.forEach(point => {
+        const lines = pdf.splitTextToSize(point, contentWidth - 20)
+        lines.forEach(line => {
+          checkPage(6)
+          pdf.text(line, centerX, y, { align: 'center' })
+          y += 5
+        })
+        y += 3
+      })
+      y += 5
+    })
   }
 
   return (
@@ -1154,14 +1616,77 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
           
           {/* Show more/less toggle for mobile */}
           {localEvents.length > 2 && (
-            <button 
-              className="show-all-events-btn" 
+            <button
+              className="show-all-events-btn"
               onClick={() => setShowAllEvents(!showAllEvents)}
               aria-label={showAllEvents ? 'Show less events' : 'Show all events'}
             >
               {showAllEvents ? '▲ Show Less' : '▼ View All Events'}
             </button>
           )}
+
+          {/* Add Custom Item */}
+          <div className="custom-items-card">
+            <h3 className="custom-items-title">Add Custom Item</h3>
+            <p className="custom-items-subtitle">
+              Add anything extra (e.g., LED Walls). It will appear in Deliverables and the total budget.
+            </p>
+
+            {customDeliverables.length > 0 && (
+              <div className="custom-items-list">
+                {customDeliverables.map((item, index) => (
+                  <div key={index} className="custom-item-row">
+                    <span className="custom-item-name">{item.title}</span>
+                    <span className="custom-item-qty">x{item.quantity}</span>
+                    <span className="custom-item-price">
+                      ₹ {(item.price * item.quantity).toLocaleString()}
+                    </span>
+                    <button
+                      className="custom-item-remove"
+                      onClick={() => handleRemoveDeliverable(index)}
+                      aria-label="Remove item"
+                      title="Remove item"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="deliverable-add-form">
+              <input
+                type="text"
+                className="deliverable-input deliverable-input-title"
+                placeholder="Title (e.g., LED Walls)"
+                value={newDeliverable.title}
+                onChange={(e) => handleNewDeliverableChange('title', e.target.value)}
+              />
+              <input
+                type="number"
+                min="1"
+                className="deliverable-input deliverable-input-qty"
+                placeholder="Qty"
+                value={newDeliverable.quantity}
+                onChange={(e) => handleNewDeliverableChange('quantity', e.target.value)}
+              />
+              <input
+                type="number"
+                min="0"
+                className="deliverable-input deliverable-input-price"
+                placeholder="Price (₹)"
+                value={newDeliverable.price}
+                onChange={(e) => handleNewDeliverableChange('price', e.target.value)}
+              />
+              <button
+                className="deliverable-add-btn"
+                onClick={handleAddDeliverable}
+                disabled={!newDeliverable.title.trim()}
+              >
+                Add
+              </button>
+            </div>
+          </div>
         </section>
 
         {/* Grand Total */}
@@ -1170,11 +1695,62 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
             <div className="total-label-container">
               <p className="total-label">Total Budget</p>
               <p className="events-count">
-                {quoteData.events.length} {quoteData.events.length === 1 ? 'Event' : 'Events'}
+                {getEventsCountLabel()}
               </p>
             </div>
             <p className="grand-total-price">₹ {calculateTotalBudget().toLocaleString()}</p>
           </div>
+        </section>
+
+        {/* Deliverables */}
+        <section className="qs-deliverables-section">
+          <h2 className="deliverables-title">Deliverables</h2>
+
+          {/* Videos grouped by type - event names side by side */}
+          {videoDeliverablesByType.map(group => (
+            <div key={group.heading} className="deliverable-group">
+              <h3 className="deliverable-group-title">{group.heading}</h3>
+              <div className="deliverable-events-row">
+                {group.events.map((name, i) => (
+                  <span key={i} className="deliverable-event-chip">{name}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Albums at the end */}
+          {albumDeliverables.length > 0 && (
+            <div className="deliverable-group">
+              <h3 className="deliverable-group-title">Albums</h3>
+              <div className="deliverable-list">
+                {albumDeliverables.map((album, index) => (
+                  <div key={index} className="deliverable-item">
+                    <span className="deliverable-item-name">{album.title} ({album.sheets})</span>
+                    <span className="deliverable-item-qty">x{album.quantity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Custom (manually added) deliverables */}
+          {customDeliverables.length > 0 && (
+            <div className="deliverable-group">
+              <h3 className="deliverable-group-title">Additional Deliverables</h3>
+              <div className="deliverable-list">
+                {customDeliverables.map((item, index) => (
+                  <div key={index} className="deliverable-item deliverable-item-custom">
+                    <span className="deliverable-item-name">{item.title}</span>
+                    <span className="deliverable-item-qty">x{item.quantity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {videoDeliverablesByType.length === 0 && albumDeliverables.length === 0 && customDeliverables.length === 0 && (
+            <p className="deliverables-empty">No videos or albums selected yet. Add custom items from the events section above.</p>
+          )}
         </section>
 
         {/* Client Name Input */}
@@ -1185,7 +1761,7 @@ const QuoteSummary = ({ quoteData, onBack, onDownload, onQuantityChange }) => {
                 id="clientName"
                 type="text"
                 className="client-name-input"
-                placeholder="e.g., Anu's Wedding"
+                placeholder="e.g., Anu's Wedding Quote"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
               />

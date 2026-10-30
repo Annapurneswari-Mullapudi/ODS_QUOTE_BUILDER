@@ -4,14 +4,18 @@ import './AlbumSize.css'
 
 const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums = {}, initialAlbumNotes = {}, isWeddingFlow }) => {
   const [selectedSheets, setSelectedSheets] = useState(null)
+  const [customSheetCount, setCustomSheetCount] = useState('')
   const [selectedSize, setSelectedSize] = useState(null)
+  const [customSizeValue, setCustomSizeValue] = useState('')
   const [selectedAlbums, setSelectedAlbums] = useState(initialSelectedAlbums.length > 0 ? initialSelectedAlbums.reduce((acc, album, idx) => {
     const key = `${album.sizeId}-${album.sheets}`
     acc[key] = {
       sizeId: album.sizeId,
       sheets: album.sheets,
       quantity: album.quantity,
-      price: album.price
+      price: album.price,
+      title: album.title,
+      description: album.description
     }
     return acc
   }, {}) : {})
@@ -49,6 +53,12 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
     { id: '150', count: '150 sheets', label: '150 sheets' }
   ]
 
+  // Resolve the effective sheet count: either a listed option or a manual entry
+  const effectiveSheets = selectedSheets === 'custom' ? customSheetCount : selectedSheets
+
+  // Resolve the effective album size: a listed option id, or the manually entered label
+  const effectiveSize = selectedSize === 'custom' ? customSizeValue.trim() : selectedSize
+
   const sizes = [
     { id: 'small', title: '8×10', description: 'Small' },
     { id: 'medium', title: '10×12', description: 'Medium' },
@@ -56,44 +66,71 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
     { id: 'extra-large', title: '14×40', description: 'Extra Large' }
   ]
 
+  // Price is ₹400 per sheet (50 → 20,000, 100 → 40,000, 150 → 60,000),
+  // which also prices any manually entered sheet count.
+  const PRICE_PER_SHEET = 400
   const getPriceForSheets = (sheetCount) => {
-    const priceMap = {
-      '50': 20000,
-      '100': 40000,
-      '150': 60000
-    }
-    return priceMap[sheetCount] || 0
+    const count = Number(sheetCount)
+    if (!count || count <= 0) return 0
+    return count * PRICE_PER_SHEET
   }
 
   const handleSheetsChange = (sheetId) => {
     setSelectedSheets(sheetId)
+    setCustomSheetCount('') // Reset manual entry when selection changes
     setSelectedSize(null) // Reset size when sheets change
+    setCustomSizeValue('')
+  }
+
+  const handleCustomSheetChange = (value) => {
+    // Allow only positive whole numbers
+    const sanitized = value.replace(/[^\d]/g, '')
+    setCustomSheetCount(sanitized)
+    setSelectedSize(null) // Reset size when the count changes
+    setCustomSizeValue('')
   }
 
   const handleSizeChange = (sizeId) => {
     setSelectedSize(sizeId)
+    if (sizeId !== 'custom') {
+      setCustomSizeValue('') // Clear manual entry when a listed size is chosen
+    }
   }
 
   const handleAddAlbum = () => {
-    if (!selectedSheets || !selectedSize) return
+    if (!effectiveSheets || Number(effectiveSheets) <= 0 || !selectedSize) return
+    // A manual size requires a non-empty label
+    if (selectedSize === 'custom' && !customSizeValue.trim()) return
+
+    const isCustom = selectedSize === 'custom'
+    const sizeObj = sizes.find(s => s.id === selectedSize)
+    const sizeId = isCustom ? `custom-${customSizeValue.trim()}` : selectedSize
+    const title = isCustom ? customSizeValue.trim() : sizeObj.title
+    const description = isCustom ? 'Custom' : sizeObj.description
 
     const newSelectedAlbums = { ...selectedAlbums }
-    const key = `${selectedSize}-${selectedSheets}`
-    
+    const key = `${sizeId}-${effectiveSheets}`
+
     if (newSelectedAlbums[key]) {
       newSelectedAlbums[key].quantity += 1
     } else {
       newSelectedAlbums[key] = {
-        sizeId: selectedSize,
-        sheets: selectedSheets,
+        sizeId,
+        sheets: effectiveSheets,
         quantity: 1,
-        price: getPriceForSheets(selectedSheets)
+        price: getPriceForSheets(effectiveSheets),
+        title,
+        description
       }
     }
 
     setSelectedAlbums(newSelectedAlbums)
     updateTotalPrice(newSelectedAlbums)
-    setSelectedSize(null) // Reset size after adding
+    // Reset all selections after adding so the next album starts fresh
+    setSelectedSheets(null)
+    setCustomSheetCount('')
+    setSelectedSize(null)
+    setCustomSizeValue('')
   }
 
   const handleRemoveAlbum = (key) => {
@@ -165,8 +202,8 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
           sheets: album.sheets,
           quantity: album.quantity,
           price: album.price,
-          title: sizeObj.title,
-          description: sizeObj.description,
+          title: album.title || (sizeObj ? sizeObj.title : 'Album'),
+          description: album.description || (sizeObj ? sizeObj.description : 'Custom'),
           notes: albumNotes[key] || ''
         }
       })
@@ -185,7 +222,7 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
       sheets: album.sheets,
       quantity: album.quantity,
       price: album.price,
-      title: sizeObj.title,
+      title: album.title || (sizeObj ? sizeObj.title : 'Album'),
       totalPrice: album.price * album.quantity
     }
   })
@@ -235,14 +272,28 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
                   {sheet.label}
                 </option>
               ))}
+              <option value="custom">Enter manually</option>
             </select>
+
+            {/* Manual sheet count entry */}
+            {selectedSheets === 'custom' && (
+              <input
+                type="number"
+                min="1"
+                className="custom-sheets-input"
+                placeholder="Enter number of sheets"
+                value={customSheetCount}
+                onChange={(e) => handleCustomSheetChange(e.target.value)}
+                autoFocus
+              />
+            )}
           </div>
 
-          {/* Album Size Selection - Only show if sheets selected */}
-          {selectedSheets && (
+          {/* Album Size Selection - Only show if a valid sheet count is set */}
+          {effectiveSheets && Number(effectiveSheets) > 0 && (
             <div className="dropdown-group">
               <label className="dropdown-label">Album Size</label>
-              <select 
+              <select
                 className="dropdown-select"
                 value={selectedSize || ''}
                 onChange={(e) => handleSizeChange(e.target.value)}
@@ -253,12 +304,25 @@ const AlbumSize = ({ onBack, onNext, cumulativeTotalPrice, initialSelectedAlbums
                     {size.title} - {size.description}
                   </option>
                 ))}
+                <option value="custom">Enter manually</option>
               </select>
+
+              {/* Manual size entry */}
+              {selectedSize === 'custom' && (
+                <input
+                  type="text"
+                  className="custom-sheets-input"
+                  placeholder="Enter album size (e.g., 16×24)"
+                  value={customSizeValue}
+                  onChange={(e) => setCustomSizeValue(e.target.value)}
+                  autoFocus
+                />
+              )}
             </div>
           )}
 
           {/* Add Album Button - Show when both selections made */}
-          {selectedSheets && selectedSize && (
+          {effectiveSheets && Number(effectiveSheets) > 0 && effectiveSize && (
             <button
               className="btn-add-album"
               onClick={handleAddAlbum}

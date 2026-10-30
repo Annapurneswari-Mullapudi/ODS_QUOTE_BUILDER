@@ -187,6 +187,34 @@
   color: #ffffff;
 }
 
+.custom-sheets-input {
+  margin-top: 0.75rem;
+  background: rgba(212, 165, 116, 0.05);
+  border: 1px solid rgba(212, 165, 116, 0.3);
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.custom-sheets-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.custom-sheets-input:hover {
+  border-color: #d4a574;
+  background-color: rgba(212, 165, 116, 0.1);
+}
+
+.custom-sheets-input:focus {
+  outline: none;
+  border-color: #d4a574;
+  background-color: rgba(212, 165, 116, 0.15);
+}
+
 /* ==================== Album Sizes Grid ==================== */
 .album-sizes-grid {
   display: none;

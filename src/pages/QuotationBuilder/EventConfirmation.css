@@ -274,6 +274,13 @@
     gap: 2rem;
   }
 
+  .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
+  }
+
   .option-card {
     min-height: 14rem;
     padding: 3rem;
@@ -292,6 +299,13 @@
 @media (min-width: 48rem) and (max-width: 74.9375rem) {
   :root {
     font-size: 15px;
+  }
+
+  .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
   }
 
   .options-grid {
@@ -351,6 +365,13 @@
 @media (min-width: 30rem) and (max-width: 47.9375rem) {
   :root {
     font-size: 14px;
+  }
+
+  .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
   }
 
   .ec-header {

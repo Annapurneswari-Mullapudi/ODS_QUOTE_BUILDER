@@ -263,6 +263,13 @@
     padding: 1.75rem 3rem;
   } */
 
+  .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
+  }
+
   .qb-main {
     padding: 2.5rem 3rem;
   }
@@ -294,6 +301,13 @@
   /* .qb-header {
     padding: 1.5rem 1.5rem;
   } */
+
+  .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
+  }
 
   .header-logo {
     flex: 1;
@@ -362,10 +376,16 @@
     padding-bottom: -10%;
   }
 
-  .back-button {
+  /* .back-button {
     width: 2rem;
     height: 2rem;
     font-size: 1.25rem;
+  } */
+   .backIcon {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
+    padding: 0.5rem;  
   }
 
   .header-logo {

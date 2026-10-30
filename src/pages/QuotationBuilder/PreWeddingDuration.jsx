@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import odsLogo from '../../assets/OdsLogo.jpeg'
 import './PreWeddingDuration.css'
+import backIcon from '../../assets/back.png'
 
 const PreWeddingDuration = ({ selectedEvents, cumulativeTotalPrice, onBack, onNext, preWeddingDurationId }) => {
   const [selectedDuration, setSelectedDuration] = useState(preWeddingDurationId || null)
@@ -53,9 +54,12 @@ const PreWeddingDuration = ({ selectedEvents, cumulativeTotalPrice, onBack, onNe
     <div className="pre-wedding-duration-container">
       {/* Header */}
       <header className="pwd-header">
-        <button className="back-button" onClick={onBack} aria-label="Go back">
+        {/* <button className="back-button" onClick={onBack} aria-label="Go back">
           ←
-        </button>
+        </button> */}
+
+        <img src={backIcon} alt="One Day Stories" style={{height: '44%' }} className="backIcon" onClick={onBack} aria-label="Go back" />
+
         <div className="header-logo">
           <img src={odsLogo} alt="One Day Stories" style={{height: '80%'}}/>
         </div>

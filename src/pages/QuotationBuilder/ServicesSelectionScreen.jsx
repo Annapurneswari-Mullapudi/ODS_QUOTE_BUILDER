@@ -6,6 +6,7 @@ import camera1Img from '../../assets/camera1Img.jpeg'
 import camera2Img from '../../assets/camera2Img.jpeg'
 import droneImg from '../../assets/droneImg.jpeg'
 import audienceCameraImg from '../../assets/audienceCameraImg.jpeg'
+import backIcon from '../../assets/back.png'
 import './ServicesSelectionScreen.css'
 
 const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPrice, onBack, onNext, hideServicePrices, eventBudget, eventServicesMemory, defaultServices, isWeddingFlow }) => {
@@ -325,9 +326,12 @@ const ServicesSelectionScreen = ({ eventType, selectedEvents, cumulativeTotalPri
     <div className="services-selection-container">
       {/* Header */}
       <header className="ss-header">
-        <button className="back-button" onClick={onBack} aria-label="Go back">
+        {/* <button className="back-button" onClick={onBack} aria-label="Go back">
           ←
-        </button>
+        </button> */}
+
+        <img src={backIcon} alt="One Day Stories" style={{height: '24%' }} className="backIcon" onClick={onBack} aria-label="Go back" />
+
         <div className="header-logo">
           <img src={odsLogo} alt="One Day Stories" style={{ height: '80%' }}/>
         </div>

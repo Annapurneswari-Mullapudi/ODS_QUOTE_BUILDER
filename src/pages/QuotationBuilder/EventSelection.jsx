@@ -64,7 +64,8 @@ const EventSelection = ({ onBack, onNext }) => {
         {/* <button className="back-button" onClick={onBack} aria-label="Go back">
           ←
         </button> */}
-        <img src={backIcon} alt="One Day Stories" style={{height: '26%',  }}/>
+        <img src={backIcon} alt="One Day Stories" style={{height: '24%' }} className="backIcon"  onClick={onBack} aria-label="Go back" />
+
         <div className="header-logo">
           <img src={odsLogo} alt="One Day Stories" style={{height: '70%' }}/>
         </div>
